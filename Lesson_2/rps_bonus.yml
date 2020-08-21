@@ -1,0 +1,11 @@
+
+lines:  "-----------------------------------------------------------------"
+welcome: "   Welcome to the Game: Rock, Paper, Scissors, Spock, Lizard!    "
+name: "What is your name?"
+rules: "Do you need to know the rules of the game (y/n)?"
+invalid_response: "Error! Please enter either 'y' or 'n'."
+invalid_name: "Make sure to enter a valid name."
+play: "Let's play!"
+play_again: "Do you want to play again?"
+player_grand_winner: "You are the GRAND WINNER!"
+computer_grand_winner: "Computer is the GRAND WINNER!"
