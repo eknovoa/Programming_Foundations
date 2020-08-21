@@ -2,14 +2,19 @@ require 'yaml'
 MESSAGES = YAML.load_file('RPS_bonus.yml')
 
 VALID_CHOICES_ABB = %w(r p s sp l)
+
+VALID_CHOICES = { 'r' => 'Rock',
+                  'p' => 'Paper',
+                  's' => 'Scissors',
+                  'sp' => 'Spock',
+                  'l' => 'Lizard' }
+
 WIN_OPTIONS = { 'r' => ['s', 'l'],
                 'p' => ['r', 'sp'],
                 's' => ['p', 'l'],
                 'sp' => ['s', 'r'],
                 'l' => ['sp', 'p'] }
 
-PLAYER_WINS = []
-COMPUTER_WINS = []
 TOTAL_WINS = 5
 
 def prompt(message)
@@ -29,66 +34,52 @@ def valid_name?(n)
   n
 end
 
-def player_display(display)
-  if display == 'r'
-    display_output = 'Rock'
-  elsif display == 'p'
-    display_output = 'Paper'
-  elsif display == 's'
-    display_output = 'Scissors'
-  elsif display == 'sp'
-    display_output = 'Spock'
-  else
-    display_output = 'Lizard'
+def display_choices
+  prompt("Choose one: #{VALID_CHOICES}")
+end
+
+def get_full_choice_name(choice)
+  case choice
+  when "r" then "Rock"
+  when "p" then "Paper"
+  when "s" then "Scissors"
+  when "sp" then "Spock"
+  when "l" then "Lizard"
   end
-  display_output
 end
 
-def computer_display(display)
-  if display == 'r'
-    computer_display = 'Rock'
-  elsif display == 'p'
-    computer_display = 'Paper'
-  elsif display == 's'
-    computer_display = 'Scissors'
-  elsif display == 'sp'
-    computer_display = 'Spock'
-  else
-    computer_display = 'Lizard'
-  end
-  computer_display
-end
-
-def player_win?(player, computer)
-  WIN_OPTIONS.key?(player) && WIN_OPTIONS[player].include?(computer)
-end
-
-def computer_win?(computer, player)
-  WIN_OPTIONS.key?(computer) && WIN_OPTIONS[computer].include?(player)
+def who_won?(user_one, user_two)
+  WIN_OPTIONS.key?(user_one) && WIN_OPTIONS[user_one].include?(user_two)
 end
 
 def display_results(player, computer)
-  if player_win?(player, computer)
+  if who_won?(player, computer)
     prompt("You won!")
-    PLAYER_WINS << 1
-  elsif computer_win?(computer, player)
+  elsif who_won?(computer, player)
     prompt("Computer won!")
-    COMPUTER_WINS << 1
   else
     prompt("It's a tie!")
   end
 end
 
-def display_scoreboard
-  prompt("Scoreboard:
-   Player: #{PLAYER_WINS.sum}
-   Computer: #{COMPUTER_WINS.sum}")
+def update_wins(player, computer, score)
+  if who_won?(player, computer)
+    score['player'] += 1
+  elsif who_won?(computer, player)
+    score['computer'] += 1
+  end
 end
 
-def display_grand_winner
-  if PLAYER_WINS.sum == TOTAL_WINS
+def display_scoreboard(score)
+  prompt("Scoreboard:
+   Player: #{score['player']}
+   Computer: #{score['computer']}")
+end
+
+def display_grand_winner(score)
+  if score['player'] == TOTAL_WINS
     prompt(MESSAGES['player_grand_winner'])
-  elsif COMPUTER_WINS.sum == TOTAL_WINS
+  elsif score['computer'] == TOTAL_WINS
     prompt(MESSAGES['computer_grand_winner'])
   end
 end
@@ -100,10 +91,10 @@ def clear_screen(answer)
   answer
 end
 
-def reset_scoreboard(answer)
-  if (PLAYER_WINS.sum == TOTAL_WINS || COMPUTER_WINS.sum == TOTAL_WINS) &&
+def reset_scoreboard(answer, score)
+  if (score['player'] == TOTAL_WINS || score['computer'] == TOTAL_WINS) &&
      answer == 'y'
-    PLAYER_WINS.clear && COMPUTER_WINS.clear
+    score['player'] = 0 && score['computer'] = 0
   end
 end
 
@@ -118,44 +109,49 @@ prompt("Hi, #{name.capitalize}!")
 
 prompt(MESSAGES['rules'])
 rules = Kernel.gets().chomp()
-if rules.start_with?('y') || (rules.start_with?('n') && rules.size > 1)
+if rules != 'y' && rules != 'n'
   loop do
-    if rules.start_with?('y') && rules.size == 1
-      rules_game = <<-MSG
-      The Rules are:
-      ----------------------------
-      Scissors cuts Paper
-      Paper covers Rock
-      Rock crushes Lizard
-      Lizard poisons Spock
-      Spock smashes Scissors
-      Scissors decapitates Lizard
-      Lizard eats Paper
-      Paper disproves Spock
-      Spock vaporizes Rock
-      Rock crushes Scissors
-      MSG
-      prompt(rules_game)
-      break
-    end
     prompt(MESSAGES['invalid_response'])
     rules = Kernel.gets().chomp().downcase()
+    break if rules.start_with?('y') && rules.size == 1
     break if rules.start_with?('n') && rules.size == 1
+  end
+  if rules.start_with?('y') || (rules.start_with?('n') && rules.size > 1)
+    loop do
+      if rules.start_with?('y') && rules.size == 1
+        rules_game = <<-MSG
+        The Rules are:
+        ----------------------------
+        Scissors cuts Paper
+        Paper covers Rock
+        Rock crushes Lizard
+        Lizard poisons Spock
+        Spock smashes Scissors
+        Scissors decapitates Lizard
+        Lizard eats Paper
+        Paper disproves Spock
+        Spock vaporizes Rock
+        Rock crushes Scissors
+        MSG
+        prompt(rules_game)
+        break
+      end
+      prompt(MESSAGES['invalid_response'])
+      rules = Kernel.gets().chomp().downcase()
+      break if rules.start_with?('n') && rules.size == 1
+    end
   end
 end
 
 puts " "
+prompt(MESSAGES['game_info'])
 prompt(MESSAGES['play'])
 
+scoreboard = { 'player' => 0, 'computer' => 0 }
 loop do
   choice = ''
   loop do
-    prompt("Choose one:
-  '#{VALID_CHOICES_ABB[0]}'  - Rock
-  '#{VALID_CHOICES_ABB[1]}'  - Paper
-  '#{VALID_CHOICES_ABB[2]}'  - Scissors
-  '#{VALID_CHOICES_ABB[3]}' - Spock
-  '#{VALID_CHOICES_ABB[4]}'  - Lizard")
+    display_choices
     choice = Kernel.gets().chomp()
     if VALID_CHOICES_ABB.include?(choice)
       break
@@ -165,15 +161,16 @@ loop do
   end
 
   computer_choice = VALID_CHOICES_ABB.sample
-  display_computer = computer_display(computer_choice)
-  display_choice = player_display(choice)
+  display_computer = get_full_choice_name(computer_choice)
+  display_choice = get_full_choice_name(choice)
   prompt("You chose: #{display_choice}; Computer chose: #{display_computer}")
 
   display_results(choice, computer_choice)
+  update_wins(choice, computer_choice, scoreboard)
   puts " "
-  display_scoreboard
+  display_scoreboard(scoreboard)
   puts " "
-  display_grand_winner
+  display_grand_winner(scoreboard)
   puts " "
 
   prompt(MESSAGES['play_again'])
@@ -188,7 +185,7 @@ loop do
   end
   break unless answer.start_with?('y') && answer.size == 1
   clear_screen(answer)
-  reset_scoreboard(answer)
+  reset_scoreboard(answer, scoreboard)
 end
 
 prompt("Thank you for playing, #{name.capitalize}. Goodbye!")
