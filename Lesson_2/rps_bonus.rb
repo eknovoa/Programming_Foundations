@@ -169,7 +169,6 @@ loop do
   display_choice = player_display(choice)
   prompt("You chose: #{display_choice}; Computer chose: #{display_computer}")
 
-  
   display_results(choice, computer_choice)
   puts " "
   display_scoreboard
