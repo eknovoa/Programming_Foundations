@@ -70,10 +70,10 @@ end
 def display_results(player, computer)
   if player_win?(player, computer)
     prompt("You won!")
-    PLAYER_WINS.push(1)
+    PLAYER_WINS << 1
   elsif computer_win?(computer, player)
     prompt("Computer won!")
-    COMPUTER_WINS.push(1)
+    COMPUTER_WINS << 1
   else
     prompt("It's a tie!")
   end
