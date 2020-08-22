@@ -22,7 +22,7 @@ def prompt(message)
 end
 
 def valid_name?(n)
-  char_num = "0-9!#$%&'()*+,-./:;<=>?@[]^_`{|}~"
+  char_num = "0-9!#$%&'()*+,-./:;<=>?@[]^_`{|}~' '"
   loop do
     if n.count('a-zA-z') > 0 && n.count(char_num) == 0
       break
