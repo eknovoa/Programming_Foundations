@@ -114,12 +114,15 @@ def player_places_piece!(brd)
   loop do
     prompt("Choose a position to place a piece: " \
            "(#{joinor(empty_squares(brd))})")
-    square = gets.chomp.to_i
-    break if empty_squares(brd).include?(square)
-
+    square = gets.chomp
+    break if valid_player_piece?(brd, square)
     prompt(MESSAGES['invalid_choice'])
   end
-  brd[square] = PLAYER_MARKER
+  brd[square.to_i] = PLAYER_MARKER
+end
+
+def valid_player_piece?(brd, square)
+  empty_squares(brd).include?(square.to_i) && square.to_i.to_s == square
 end
 
 def computer_places_piece!(brd)
