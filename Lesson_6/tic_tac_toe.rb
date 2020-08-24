@@ -1,21 +1,20 @@
-# rubocop:disable Style/MutableConstant, Style/FrozenStringLiteralComment
 require 'yaml'
 MESSAGES = YAML.load_file('tic_tac_toe.yml')
 INITIAL_MARKER = ' '
 PLAYER_MARKER = 'X'
 COMPUTER_MARKER = 'O'
 GOES_FIRST = 'choose'
-# rubocop:enable Style/MutableConstant, Style/FrozenStringLiteralComment
 
 WINNING_LINES = [[1, 2, 3], [4, 5, 6], [7, 8, 9]] +
                 [[1, 4, 7], [2, 5, 8], [3, 6, 9]] +
                 [[1, 5, 9], [3, 5, 7]]
+WINS = 5
 
 def prompt(msg)
   puts "=> #{msg}"
 end
 
-# rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Style/StringLiterals
+# rubocop:disable Metrics/AbcSize, Metrics/MethodLength
 def display_game_intro
   system 'clear'
   prompt(MESSAGES['welcome'])
@@ -35,7 +34,9 @@ def display_game_intro
   puts "     |     |     "
   puts ""
 end
+# rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
+# rubocop:disable Metrics/AbcSize
 def display_board(brd)
   system 'clear' || system('cls')
   puts "You're a #{PLAYER_MARKER}. Computer is #{COMPUTER_MARKER}."
@@ -53,7 +54,7 @@ def display_board(brd)
   puts "     |     |"
   puts ""
 end
-# rubocop:enable Metrics/MethodLength, Metrics/AbcSize, Style/StringLiterals
+# rubocop:enable Metrics/AbcSize
 
 def joinor(arr, delimiter = ', ', word = 'or')
   case arr.size
@@ -76,10 +77,11 @@ def empty_squares(brd)
   brd.keys.select { |num| brd[num] == INITIAL_MARKER }
 end
 
-# rubocop:disable Metrics/MethodLength
 def who_goes_first?
   if GOES_FIRST == 'choose'
     loop do
+      prompt(MESSAGES['goes_first'])
+      prompt(MESSAGES['c_or_p'])
       answer = gets.chomp.downcase
       case answer
       when 'c' then return 'computer'
@@ -92,9 +94,8 @@ def who_goes_first?
     GOES_FIRST
   end
 end
-# rubocop:enable Metrics/MethodLength
 
-def plays_first!(brd, current_player)
+def turn(brd, current_player)
   case current_player
   when 'computer' then computer_places_piece!(brd)
   when 'player' then player_places_piece!(brd)
@@ -111,7 +112,8 @@ end
 def player_places_piece!(brd)
   square = ''
   loop do
-    prompt("Choose a position to place a piece: (#{joinor(empty_squares(brd))})")
+    prompt("Choose a position to place a piece: " \
+           "(#{joinor(empty_squares(brd))})")
     square = gets.chomp.to_i
     break if empty_squares(brd).include?(square)
 
@@ -120,7 +122,6 @@ def player_places_piece!(brd)
   brd[square] = PLAYER_MARKER
 end
 
-# rubocop:disable Metrics/MethodLength, Style/IfUnlessModifier, Style/NegatedIf
 def computer_places_piece!(brd)
   square = nil
   square = computer_offense!(brd, square)
@@ -138,7 +139,6 @@ def computer_places_piece!(brd)
   end
   brd[square] = COMPUTER_MARKER
 end
-# rubocop:enable Metrics/MethodLength, Style/IfUnlessModifier, Style/NegatedIf
 
 def computer_offense!(brd, square)
   WINNING_LINES.each do |line|
@@ -156,13 +156,11 @@ def computer_defense!(brd, square)
   square
 end
 
-# rubocop:disable Style/GuardClause
 def defend_the_square(line, board, marker)
   if board.values_at(*line).count(marker) == 2
     board.select { |k, v| line.include?(k) && v == INITIAL_MARKER }.keys.first
   end
 end
-# rubocop:enable Style/GuardClause
 
 def board_full?(brd)
   empty_squares(brd).empty?
@@ -180,7 +178,7 @@ def detect_winner(brd)
   nil
 end
 
-def update_wins?(brd, score)
+def update_wins(brd, score)
   if detect_winner(brd) == 'Player'
     score['Player'] += 1
   elsif detect_winner(brd) == 'Computer'
@@ -195,38 +193,39 @@ def display_scoreboard(score)
 end
 
 def display_grand_winner(score)
-  if score['Player'] == 5
+  if score['Player'] == WINS
     prompt(MESSAGES['you_winner'])
-  elsif score['Computer'] == 5
+  elsif score['Computer'] == WINS
     prompt(MESSAGES['computer_winner'])
   end
 end
 
-def reset_scoreboard(response, score)
-  if (score['Player'] == 5 || score['Computer'] == 5) &&
-     response == 'y'
+def reset_scoreboard(answer, score)
+  if (score['Player'] == WINS || score['Computer'] == WINS) &&
+     play_again?(answer) == 'y'
     score['Player'] = 0 && score['Computer'] = 0
   end
 end
 
-# rubocop:disable Metrics/CyclomaticComplexity
-def play_again?(response)
-  if response != 'y' && response != 'n'
+def play_again?
+  prompt(MESSAGES['play_again'])
+  answer = gets.chomp
+  if answer != 'y' && answer != 'n'
     loop do
       prompt(MESSAGES['invalid_response'])
-      response = gets.chomp.downcase
-      break if response.start_with?('y') && response.size == 1
-      break if response.start_with?('n') && response.size == 1
+      answer = gets.chomp.downcase
+      break if answer == 'y' || answer == 'n'
     end
+    reset_scoreboard(answer, scoreboard)
   end
-  response
+  answer
 end
-# rubocop:enable Metrics/CyclomaticComplexity
 
-# rubocop:disable Metrics/BlockLength
+def display_goodbye
+  prompt(MESSAGES['goodbye'])
+end
+
 display_game_intro
-prompt(MESSAGES['goes_first'])
-prompt(MESSAGES['c_or_p'])
 loop do
   scoreboard = { 'Player' => 0, 'Computer' => 0 }
   current_player = who_goes_first?
@@ -234,13 +233,13 @@ loop do
     board = initialize_board
     loop do
       display_board(board)
-      plays_first!(board, current_player)
+      turn(board, current_player)
       current_player = alternate_player(current_player)
       break if someone_won?(board) || board_full?(board)
     end
 
     if someone_won?(board)
-      update_wins?(board, scoreboard)
+      update_wins(board, scoreboard)
       display_board(board)
       display_scoreboard(scoreboard)
       prompt "#{detect_winner(board)} won!"
@@ -250,14 +249,9 @@ loop do
       prompt(MESSAGES['tie'])
     end
 
-    prompt(MESSAGES['play_again'])
-    answer = gets.chomp
-    answer = play_again?(answer)
-    reset_scoreboard(answer, scoreboard)
-    break unless answer.start_with?('y') && answer.size == 1
+    break if play_again? == 'n'
   end
   break
 end
-# rubocop:enable Metrics/BlockLength
 
-prompt(MESSAGES['goodbye'])
+display_goodbye
