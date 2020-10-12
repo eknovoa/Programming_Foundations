@@ -6,11 +6,11 @@ words that contain five or more characters reversed.
   Input:
   -string
   Output:
-  -returns the original string modified
+  -return a modified string
 
   Rules:
-  -the given string will contain one or more reverse_words
-  -inside the string that is returned, the words that contain five or more characters will be reverse_words
+  -the given string will contain one or more words
+  -inside the string that is returned, the words that contain five or more characters will be reversed
   -each string will consist of only letters and spaces
   -spaces should be included only when more than one word is present
 
