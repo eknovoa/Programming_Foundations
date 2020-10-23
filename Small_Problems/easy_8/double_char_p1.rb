@@ -1,53 +1,48 @@
 =begin
 Problem
--write a method that takes a positive integer as an argument and returns that number with its digits reversed.
+-write a method that takes a string, and returns a new string in which every character is doubled.
 
   Input:
-  -integer
+  -string
   Output:
-  -same integer but reversed
+  -new string
 
   Rules:
-  -don't worry about arguments with leading zeros
+  -in the new string every character is doubled
+  -it's not case-sensitive
+  -characters also include non-alphanumeric and spaces are doubled
 
 Examples/Test Cases
-reversed_number(12345) == 54321
-reversed_number(12213) == 31221
-reversed_number(456) == 654
-reversed_number(12000) == 21 # No leading zeros in return value!      
-reversed_number(12003) == 30021
-reversed_number(1) == 1
+repeater('Hello') == "HHeelllloo"
+repeater("Good job!") == "GGoooodd  jjoobb!!"
+repeater('') == ''
 
 Data Structure
--integers, strings, and arrays
+-strings, arrays, and integers
 
 Algorithm
--define the method reversed_number and it has one parameter, int
--initalize the variable array and assign it to the return value of calling the .to_s .chars method on the parameter int
--initalize the variable new_array and assign it to an empty array
--call the map method on the variable array and pass in the do...end block as its argument and it has one parameter, num_str
+-define the method repeater and it has one paramter, string
+-initalize the variable str_split and assign it to the value of calling the chars method on the parameter, string
+-initalize the variable array and assign it to an empty array
+-call the map method on the variable str_split and pass in the do...end block as its argument it will have one parameter, letter
   inside the method:
-  -call the unshift method on the variable new_array and pass in the variable, num_str as its argument
--call the join method on the variable array and then call the .to_i to convert it into an integer and then return that value
+  -use the shovel operator to push (letter * 2) into the variable array
+-call the join method on the variable array
 
 Code
 
-
 =end
 
-def reversed_number(int)
-  new_array = []
-  array = int.to_s.chars
-  array.map do |num_str|
-    new_array.unshift(num_str)
+def repeater(string)
+  array = []
+  str_split = string.chars
+  str_split.map do |letter|
+    array << letter * 2
   end
-  new_array.join.to_i   
+  array.join
 end
 
 #test cases
-p reversed_number(12345) == 54321
-p reversed_number(12213) == 31221
-p reversed_number(456) == 654
-p reversed_number(12000) == 21 # No leading zeros in return value!
-p reversed_number(12003) == 30021
-p reversed_number(1) == 1
+p repeater('Hello') == "HHeelllloo"
+p repeater("Good job!") == "GGoooodd  jjoobb!!"
+p repeater('') == ''
