@@ -22,34 +22,31 @@ Data Structure
 integers, strings, and arrays
 
 Algorithm
--define the method stringy and it has one parameter, int
+-define the method stringy and it has one parameter, length
 -the integer given will be the length of the string that is returned
 -we need to alternate with 1s and 0s, starting with 1 so essentially 1s will be even and 0s will be odd, in terms of the index (position)
--initialize the variable array and assign it to an empty array
+-initialize the variable result and assign it to an empty string
 -initalize the variable index and assign it to 0
--let's call the while loop method and pass in this conditional statement as its argument, index <= int
+-until the size of the variable result is equal to length
   inside the loop method:
-  -if index.even? then we will push the string '1' into the variable, array.
-  -else we will push the string '0' into the variable, array
+  -if index.even? then we will push the string '1' into the result.
+  -else we will push the string '0' into the result
   -index += 1
--call the join method on our array variable and pass in "" as its argument
+-return the value stored in the variable, result
 
 Code
 
 =end
 
-def stringy(int)
-  array = []
+def stringy(length)
+  result = ""
   index = 0
-  while index < int
-    if index.even?
-      array << '1'
-    else
-      array << '0'
-    end
+  until result.size == length
+    result << '1' if index.even?
+    result << '0' if index.odd?
     index += 1
   end
-  array.join("")
+  result
 end
 
 #test cases
