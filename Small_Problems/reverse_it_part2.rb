@@ -38,13 +38,8 @@ Code
 
 =end
 
-def reverse_words(string)
-  str_split = string.split()
-  str_split.each do |element|
-    if element.size >= 5
-      element.reverse!
-    end
-  end
+def reverse_words(str)
+  str_split = str.split.each { |word| word.reverse! if word.size >= 5}
   str_split.join(" ")
 end
 
