@@ -22,17 +22,16 @@ Data Structure
 Algorithm
 -define the method sum and it has one parameter, int
 -I need to break this integer into single digits and then add them up without using the basic looping constructs mentioned in the rules above.
--we can use the reduce method to sum the digits .reduce(:+)
--we need to chain the following methods together and call them on the variable int... (.to_s.chars.map(&:to_i).reduce(:+)) so what this chain of methods is doing
-is changing the given integer into a string and then separating out the digits into an array and iterating through the array using the map method and changing each element
-into an integer and then we use the reduce method (:+) with this syntax to sum up the digits.
+-first turn the int into a string and then call the chars method to split up the string element inside an array
+-then call the map method to convert each element into an integer, #to_i
+-then call the sum method on the new array
 
 Code
 
 =end
 
 def sum(int)
-  int.to_s.chars.map(&:to_i).reduce(:+)
+  int.to_s.chars.map { |x| x.to_i }.sum
 end
 
 #test cases
