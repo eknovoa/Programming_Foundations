@@ -19,26 +19,19 @@ Data Structure
 Algorithm
 -define the method digit_list and it has one parameter, int
 -inside the method definition:
-  -initalize the variable new_array and assign it to an empty array
-  -initalize the variable int_to_str and assign it to the value of calling the to_s method to convert the parameter, int into a string so we can break apart the number into strings in an array
-  -then initalize the variable int_split and assign it to the value of calling the chars method on the variable, int_to_str
-  -now we need to iterate through the array to turn each element into an integer. The best way to do this is by calling the map method on the variable, int_to_str
+  -convert the integer into a string using the .to_s method and then call the chars method to split the string into an array
+  -now we need to iterate through the array to turn each element into an integer. The best way to do this is by calling the map method right after calling the chars method
     and pass in the do...end block as its argument and give it one parameter, element
   -inside the method:
-      -we need to convert the element into an integer by calling the #to_i method on the element and pushing the value into the new_array variable by calling the shovel operator (<<)
+      -we need to convert the element into an integer by calling the #to_i method on the element
+  -since we called the map method, we know that it will return a new array with the return values from the block
 
 Code
 
 =end
 
 def digit_list(int)
-  new_array = []
-  int_to_str = int.to_s
-  int_split = int_to_str.chars
-  int_split.map do |element|
-    new_array << element.to_i
-  end
-  new_array
+  int.to_s.chars.map { |element| element.to_i }
 end
 
 #test cases
