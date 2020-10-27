@@ -22,12 +22,11 @@ Data Structure
 
 Algorithm
 -define the method ascii_value and it has one paramter, str
--initalize the variable, str_split and assign it to the return value of calling the chars method on str
 -initalize the variable, sum and assign it to 0
--call the each method on the variable str_split and pass in the do...end block as its argument and it has one paramter, char
+-call the chars method to split the string apart and into an array and then call the each method to iterate through the array and pass in the do...end block as its 
+  argument and it has one paramter, char
   inside the method:
-  -initalize the variable value and assign it to the value of calling the ord method on char
-  -reassign the variable sum to be sum = sum + value
+  -reassign the variable sum to be sum = sum + char.ord
 return the value stored in the variable, sum
 
 Code
@@ -35,17 +34,8 @@ Code
 =end
 
 def ascii_value(str)
-  str_split = str.chars
   sum = 0
-
-  if str.empty?
-    return 0
-  end
-  
-  str_split.each do |char|
-    value = char.ord
-    sum += value
-  end
+  str.chars.each { |char| sum += char.ord }
   sum
 end
 
