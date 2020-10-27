@@ -38,8 +38,8 @@ Algorithm
     to avoid having an infinite loop, we need to reassign the variable int to be int = int / 10
     then we need to add the value from the hash into the array as the last element by calling the unshift method
 -we need to call the unshift method on the array one more time to add in the final string character to the front of the array (DIGITS[int])
--next we will call on another method called add_sign and pass in 3 arguments, array, num, and int
--define the method add_sign and it has 3 parameters, array, num, and int
+-next we will call on another method called add_sign and pass in 2 arguments, array and num
+-define the method add_sign and it has 2 parameters, array and num
     -inside this method we want to add the appropriate sign to the string, + or -
     -if num is equal to 0 then we don't need to add a sign, we can just call the join method on the array
     -elsif num is greater than 0 then we need to add the + sign to the front of the array and then join the array into one string
@@ -66,7 +66,6 @@ end
 def signed_integer_to_string(num)
   array = []
   int = positive_or_negative(num)
-
   until int / 10 == 0
     value = int % 10
     int = int / 10
@@ -74,11 +73,11 @@ def signed_integer_to_string(num)
   end
 
   array.unshift(DIGITS[int])
-  add_sign(array,num,int)
+  add_sign(array,num)
 
 end
 
-def add_sign(array,num,int)
+def add_sign(array,num)
   if num == 0
     array.join("")
   elsif num > 0 
