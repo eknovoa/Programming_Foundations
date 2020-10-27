@@ -43,12 +43,10 @@ def short_long_short(str1,str2)
     shorter = str2
     longer = str1
   end
-
-  final_str = shorter + longer + shorter
-  final_str
+  return shorter + longer + shorter
 end
 
 #test cases
-short_long_short('abc', 'defgh') == "abcdefghabc"
-short_long_short('abcde', 'fgh') == "fghabcdefgh"
-short_long_short('', 'xyz') == "xyz"
+p short_long_short('abc', 'defgh') == "abcdefghabc"
+p short_long_short('abcde', 'fgh') == "fghabcdefgh"
+p short_long_short('', 'xyz') == "xyz"
